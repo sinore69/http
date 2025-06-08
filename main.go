@@ -19,7 +19,6 @@ func parseHTTPRequest(data string) (*Request, error) {
 	if len(lines) < 1 {
 		return nil, fmt.Errorf("empty request")
 	}
-
 	requestLine := strings.Split(lines[0], " ")
 	if len(requestLine) != 3 {
 		return nil, fmt.Errorf("malformed request line")
@@ -30,7 +29,6 @@ func parseHTTPRequest(data string) (*Request, error) {
 		Version: requestLine[2],
 		Headers: make(map[string]string),
 	}
-
 	i := 1
 	for ; i < len(lines); i++ {
 		line := lines[i]
@@ -45,11 +43,9 @@ func parseHTTPRequest(data string) (*Request, error) {
 			req.Headers[key] = val
 		}
 	}
-
 	if i < len(lines) {
 		req.Body = strings.Join(lines[i:], "\r\n")
 	}
-
 	return req, nil
 }
 
@@ -60,16 +56,13 @@ func main() {
 		return
 	}
 	defer listener.Close()
-
 	fmt.Println("Listening on port 8080...")
-
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
 			fmt.Println("Connection error:", err)
 			continue
 		}
-
 		go func(c net.Conn) {
 			defer c.Close()
 
@@ -79,16 +72,13 @@ func main() {
 				fmt.Println("Read error:", err)
 				return
 			}
-
 			raw := string(buffer[:n])
 			req, err := parseHTTPRequest(raw)
 			if err != nil {
 				fmt.Println("Parse error:", err)
 				return
 			}
-
 			fmt.Printf("Received request: %+v\n", req)
-
 			resp := "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nHello, World!"
 			c.Write([]byte(resp))
 		}(conn)
